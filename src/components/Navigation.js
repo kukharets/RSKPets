@@ -1,5 +1,8 @@
 import React from 'react';
-
+import { switchDailyPreviewModalState } from '../actions';
+import { connect } from 'react-redux';
+import AddPathModal from '../components/AddPathModal';
+import Modal from 'react-modal';
 const NavItem = props => {
     console.log(props);
     const pageURI = window.location.pathname+window.location.search
@@ -47,12 +50,16 @@ class NavDropdown extends React.Component {
 
 
 class Navigation extends React.Component {
+    addPathClick = () => {
+      this.props.switchDailyPreviewModalState();
+    };
     render() {
+        console.log("Navigation props: ", this.props);
         return (
             <nav className="navbar bg-white">
                 <a className="navbar-brand text-dark" href="/">Travels</a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                <button onClick={this.addPathClick.bind(this)} className="btn bg-primary" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false">
+                    ADD PATH
                 </button>
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -72,10 +79,22 @@ class Navigation extends React.Component {
                         {/*<input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />*/}
                         {/*<button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>*/}
                     {/*</form>*/}
+                    <AddPathModal/>
                 </div>
             </nav>
         )
     }
 }
 
-export default Navigation;
+const mapStateToProps = ({ basic }) => {
+    console.log('mSTP FullReports.js > ', basic);
+    const {
+        switchDailyPreviewModalState,
+    } = basic;
+    return {
+        switchDailyPreviewModalState
+    };
+};
+export default connect(mapStateToProps, {
+    switchDailyPreviewModalState,
+})(Navigation);

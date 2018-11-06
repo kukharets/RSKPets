@@ -9,6 +9,9 @@ import reduxThunk from "redux-thunk";
 import reducers from "./reducers";
 import App from "./App";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 

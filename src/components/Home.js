@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SimpleMap from "./Map";
 
 class App extends Component {
     render() {
@@ -9,7 +10,7 @@ class App extends Component {
                             One of three columns
                         </div>
                         <div className="col-sm p-3">
-                            One of three columns
+                            <SimpleMap/>
                         </div>
                     </div>
                 </div>
