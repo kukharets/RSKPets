@@ -1,7 +1,17 @@
 import React, { Component } from "react";
 import GoogleMapReact from "google-map-react";
-
+import marker from '../assets/marker.png'
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
+class Marker extends Component {
+    render(){
+        console.log("render", this.props)
+        return (
+            <img style={{ height: '10px', width: '10px', zIndex: '4000'}} src={marker} />
+        )
+    }
+}
+
 class Polyline extends Component {
     render() {
         const { map } = this.props;
@@ -43,10 +53,10 @@ class Normal extends Polyline {
 class SimpleMap extends Component {
     static defaultProps = {
         center: {
-            lat: 36.2169884797185,
+            lat: 36.05298765935,
             lng: -112.056727493181
         },
-        zoom: 11
+        zoom: 8
     };
 
     constructor(props) {
@@ -61,8 +71,6 @@ class SimpleMap extends Component {
     recordClickInfo(e) {
         const state = this.state;
         const { markers } = state;
-        let copy = Object.assign({}, e);
-        console.log("record: ", markers, e)
         this.setState({
             ...state,
             markers: markers.concat(e)
@@ -78,10 +86,26 @@ class SimpleMap extends Component {
     };
 
     clickOnMapTrackerSwitch = () => {
-        const { clickTrackEnabled } = this.state;
+        const { clickTrackEnabled, markers } = this.state;
         this.setState({
             clickTrackEnabled: !clickTrackEnabled,
         })
+    }
+    renderMarkers = (options, options1) => {
+        console.log("render markers", options, options1)
+        let google = window.google;
+        let marker = new options1.Marker({
+            position: { lat: 36.05298765935, lng: -112.083756616339 },
+            map: options,
+            title: 'Hello World!'
+        });
+    }
+
+    googleApiLoaded = (opt) => {
+        this.setState({ map: opt.map, maps: opt.maps, mapLoaded: true });
+        const { markers } = this.state;
+        console.log("fAL", opt.map)
+        this.renderMarkers(opt.map, opt.maps)
     }
 
     render() {
@@ -90,7 +114,7 @@ class SimpleMap extends Component {
             { lat: 36.2169884797185, lng: -112.056727493181 }
         ];
         const { withControls } = this.props;
-        const { clickTrackEnabled } = this.state;
+        const { clickTrackEnabled, markers } = this.state;
         console.log("render map state: ", this.state);
         return (
             // Important! Always set the container height explicitly
@@ -111,7 +135,7 @@ class SimpleMap extends Component {
                     defaultZoom={this.props.zoom}
                     onClick={this.onMapClick}
                     onGoogleApiLoaded={({ map, maps }) => {
-                        this.setState({ map: map, maps: maps, mapLoaded: true });
+                        this.googleApiLoaded({ map: map, maps: maps, mapLoaded: true });
                     }}
                     yesIWantToUseGoogleMapApiInternals
                 >
@@ -129,6 +153,9 @@ class SimpleMap extends Component {
                         destination={{ lat: 36.2169884797185, lng: -112.056727493181 }}
                     />
                 )}
+                {/*{markers.length > 0 && markers.map((marker) => {*/}
+                    {/*return <Marker lat={59.955413} lng={30.337844}/>*/}
+                {/*})}*/}
             </div>
         );
     }
