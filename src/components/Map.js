@@ -5,25 +5,24 @@ const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Marker extends Component {
     render(){
-        console.log("render", this.props)
-        return (
-            <img style={{ height: '10px', width: '10px', zIndex: '4000'}} src={marker} />
-        )
+        const { lat, lng, map, maps } = this.props;
+        console.warn("MARKER RENDER: ", lat, lng, map, maps)
+        let marker = new maps.Marker({
+            position: { lat: lat, lng: lng },
+            map,
+            title: 'Hello World!'
+        });
+        return null;
     }
 }
 
 class Polyline extends Component {
     render() {
-        const { map } = this.props;
+        const { map, markers } = this.props;
+        console.log("----polyline render", map, markers)
         const google = window.google;
-        var flightPlanCoordinates = [
-            { lat: 37.772, lng: -122.214 },
-            { lat: 21.291, lng: -157.821 },
-            { lat: -18.142, lng: 178.431 },
-            { lat: -27.467, lng: 153.027 }
-        ];
         var flightPath = new google.maps.Polyline({
-            path: flightPlanCoordinates,
+            path: markers,
             geodesic: true,
             strokeColor: "#FF0000",
             strokeOpacity: 1.0,
@@ -64,6 +63,7 @@ class SimpleMap extends Component {
         this.state = {
             mapLoaded: false,
             markers: [],
+            polylines: [],
             clickTrackEnabled: false,
         };
     }
@@ -82,6 +82,7 @@ class SimpleMap extends Component {
         console.log(e, clickTrackEnabled);
         if (clickTrackEnabled) {
             this.recordClickInfo(e);
+            this.createPolylines();
         }
     };
 
@@ -92,13 +93,36 @@ class SimpleMap extends Component {
         })
     }
     renderMarkers = (options, options1) => {
-        console.log("render markers", options, options1)
-        let google = window.google;
-        let marker = new options1.Marker({
-            position: { lat: 36.05298765935, lng: -112.083756616339 },
-            map: options,
-            title: 'Hello World!'
-        });
+        // console.log("render markers", options, options1)
+        // let google = window.google;
+        // let marker = new options1.Marker({
+        //     position: { lat: 36.05298765935, lng: -112.083756616339 },
+        //     map: options,
+        //     title: 'Hello World!'
+        // });
+    }
+
+    createPolylines = () => {
+        const { markers } = this.state;
+        let polylines = [];
+        console.log("CICLE")
+
+        const count = markers.length;
+        if (count > 1) {
+            // for (let i = 0; i < count; i ++){
+            //     console.log("CICLE")
+            //     if (markers[i+1]){
+            //         polylines.push({
+            //             start: markers[i],
+            //             end: markers[i+1]
+            //         })
+            //
+            //     }
+            // }
+            this.setState({
+                polylines: polylines
+            })
+        }
     }
 
     googleApiLoaded = (opt) => {
@@ -114,7 +138,7 @@ class SimpleMap extends Component {
             { lat: 36.2169884797185, lng: -112.056727493181 }
         ];
         const { withControls } = this.props;
-        const { clickTrackEnabled, markers } = this.state;
+        const { clickTrackEnabled, markers, polylines } = this.state;
         console.log("render map state: ", this.state);
         return (
             // Important! Always set the container height explicitly
@@ -145,17 +169,17 @@ class SimpleMap extends Component {
                         text={"Kreyser Avrora"}
                     />
                 </GoogleMapReact>
-                {this.state.mapLoaded && (
-                    <Polyline
+
+                {markers.length > 0 && markers.map((marker) => {
+                    return <Marker lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps}/>
+                })}
+                {(this.state.mapLoaded && markers.length > 1) &&
+                     <Polyline
                         map={this.state.map}
                         maps={this.state.maps}
-                        origin={{ lat: 36.05298765935, lng: -112.083756616339 }}
-                        destination={{ lat: 36.2169884797185, lng: -112.056727493181 }}
+                        markers={this.state.markers}
                     />
-                )}
-                {/*{markers.length > 0 && markers.map((marker) => {*/}
-                    {/*return <Marker lat={59.955413} lng={30.337844}/>*/}
-                {/*})}*/}
+                }
             </div>
         );
     }
