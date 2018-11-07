@@ -35,8 +35,14 @@ class AddPathModalWrapper extends Component {
         const { markers, distance } = this.props;
         const { title, short, description } = this.state;
         console.warn(" TOTAL ::::: ", markers, distance, title, short, description )
+        let markersJSON = {};
+        if (markers.length > 1){
+            for (let i = 0; i < markers.length; i++){
+                markersJSON[i] = { lat: markers[i].lat, lng: markers[i].lng }
+            }
+        }
         const newTravel = {
-            markers, distance, title, short, description,
+            markers: markersJSON, distance, title, short, description,
         }
         this.props.addTravel(newTravel);
     };

@@ -13,6 +13,7 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 addPathModalOpenState: !state.addPathModalOpenState,
                 distance: 0,
+                markers: [],
             };
         case ADD_MARKER:
             const { markers } = state;
@@ -27,9 +28,10 @@ export default (state = INIT_STATE, action) => {
                 distance: distance + action.payload,
             };
         case FETCH_TRAVELS:
+            console.log("FETCH TRAVELS", action.payload)
             return {
                 ...state,
-                travels: action.payload,
+                travels: Object.keys(action.payload).map(function(i) { return action.payload[i] })
             };
         default:
             return state;

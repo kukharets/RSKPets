@@ -6,6 +6,7 @@ export const addToDo = newToDo => async dispatch => {
 };
 
 export const addTravel = newTravel => async dispatch => {
+    console.log("action.",newTravel)
     travelsRef.push().set(newTravel);
 };
 
