@@ -11,10 +11,18 @@ class AddPathModalWrapper extends Component {
             super();
             this.state = {
                 clickTrackEnabled: false,
+                distance: 0,
             }
         }
         sendClickInfo = (e) => {
             console.log("ADM click ->", e);
+        }
+        updateDistanceSuccess = (newPattern) => {
+            const { distance } = this.state;
+            const newDistance = distance + newPattern;
+            this.setState({
+                distance: newDistance
+            })
         }
         render() {
             const { addPathModalOpenState, switchDailyPreviewModalState } = this.props;
@@ -24,7 +32,7 @@ class AddPathModalWrapper extends Component {
                 onAfterOpen={this.afterOpenModal}
                 onRequestClose={switchDailyPreviewModalState}
                 contentLabel="Example Modal"
-                style={{ overlay: {marginTop: '20px'}, content: {} }}
+                style={{ overlay: {}, content: {} }}
             >
                 <nav className="row navbar bg-white ">
                     <div className="w-100">
@@ -36,10 +44,10 @@ class AddPathModalWrapper extends Component {
                 </nav>
                 <div className="row h-100 w-100">
                     <div className="col-sm border-right p-3">
-                        One of three columns
+                        {this.state.distance}
                     </div>
                     <div className="col-sm p-3">
-                        <SimpleMap sendClickInfo={this.sendClickInfo}withControls/>
+                        <SimpleMap updateDistanceSuccess={this.updateDistanceSuccess} sendClickInfo={this.sendClickInfo}withControls/>
                     </div>
                 </div>
             </Modal>

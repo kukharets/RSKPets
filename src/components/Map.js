@@ -52,10 +52,10 @@ class Normal extends Polyline {
 class SimpleMap extends Component {
     static defaultProps = {
         center: {
-            lat: 36.05298765935,
-            lng: -112.056727493181
+            lat: 49.82973843444284,
+            lng: 23.9697290377037
         },
-        zoom: 8
+        zoom: 16
     };
 
     constructor(props) {
@@ -65,16 +65,22 @@ class SimpleMap extends Component {
             markers: [],
             polylines: [],
             clickTrackEnabled: false,
+            distance: 0,
         };
     }
 
     recordClickInfo(e) {
         const state = this.state;
         const { markers } = state;
+        const newMarkers = markers.concat(e)
         this.setState({
             ...state,
             markers: markers.concat(e)
         })
+        if (newMarkers.length > 1) {
+            this.calculateDistance(newMarkers);
+            this.createPolylines();
+        }
     }
 
     onMapClick = e => {
@@ -82,7 +88,6 @@ class SimpleMap extends Component {
         console.log(e, clickTrackEnabled);
         if (clickTrackEnabled) {
             this.recordClickInfo(e);
-            this.createPolylines();
         }
     };
 
@@ -125,6 +130,12 @@ class SimpleMap extends Component {
         }
     }
 
+    updateDistanceSuccess = (newDistance) => {
+        console.log("uDS", newDistance)
+        this.setState({
+            distance: newDistance,
+        })
+    }
     googleApiLoaded = (opt) => {
         this.setState({ map: opt.map, maps: opt.maps, mapLoaded: true });
         const { markers } = this.state;
@@ -132,11 +143,33 @@ class SimpleMap extends Component {
         this.renderMarkers(opt.map, opt.maps)
     }
 
+    calculateDistance = (markers) => {
+        const { map, maps, distance = 0 } = this.state;
+        let self = this;
+        const lastIndex =  markers.length - 1;
+        if (markers.length > 1) {
+                var service = new maps.DistanceMatrixService();
+                service.getDistanceMatrix(
+                    {
+                        origins: [markers[lastIndex]],
+                        destinations: [markers[lastIndex-1]],
+                        travelMode: 'WALKING',
+                        avoidHighways: false,
+                        avoidTolls: false,
+                    }, callback);
+
+                function callback(response, status) {
+                    console.warn("!!!!!", response, status, distance)
+                    const newDistance = distance + response.rows[0].elements[0].distance.value;
+                    self.props.updateDistanceSuccess(response.rows[0].elements[0].distance.value)
+                }
+        }
+
+        console.log("DIIIIISTANCE", markers)
+    }
+
+
     render() {
-        const pathCoordinates = [
-            { lat: 36.05298765935, lng: -112.083756616339 },
-            { lat: 36.2169884797185, lng: -112.056727493181 }
-        ];
         const { withControls } = this.props;
         const { clickTrackEnabled, markers, polylines } = this.state;
         console.log("render map state: ", this.state);
