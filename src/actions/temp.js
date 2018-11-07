@@ -26,7 +26,6 @@ class Polyline extends Component {
     }
 
     renderPolyline() {
-        console.log("REN");
     }
 }
 

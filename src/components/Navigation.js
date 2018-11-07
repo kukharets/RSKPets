@@ -54,7 +54,6 @@ class Navigation extends React.Component {
       this.props.switchDailyPreviewModalState();
     };
     render() {
-        console.log("Navigation props: ", this.props);
         return (
             <nav className="navbar bg-white">
                 <a className="navbar-brand text-dark" href="/">Travels</a>
@@ -87,7 +86,6 @@ class Navigation extends React.Component {
 }
 
 const mapStateToProps = ({ basic }) => {
-    console.log('mSTP FullReports.js > ', basic);
     const {
         switchDailyPreviewModalState,
     } = basic;

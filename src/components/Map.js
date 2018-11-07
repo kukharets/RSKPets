@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import GoogleMapReact from "google-map-react";
 import marker from '../assets/marker.png'
+import {connect} from "react-redux";
+import {switchDailyPreviewModalState, addDistance, addMarker} from "../actions";
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Marker extends Component {
@@ -19,7 +21,6 @@ class Marker extends Component {
 class Polyline extends Component {
     render() {
         const { map, markers } = this.props;
-        console.log("----polyline render", map, markers)
         const google = window.google;
         var flightPath = new google.maps.Polyline({
             path: markers,
@@ -35,7 +36,6 @@ class Polyline extends Component {
     }
 
     renderPolyline() {
-        console.log("REN");
     }
 }
 
@@ -70,13 +70,13 @@ class SimpleMap extends Component {
     }
 
     recordClickInfo(e) {
-        const state = this.state;
-        const { markers } = state;
+        const { markers } = this.props;
         const newMarkers = markers.concat(e)
-        this.setState({
-            ...state,
-            markers: markers.concat(e)
-        })
+        // this.setState({
+        //     ...state,
+        //     markers: markers.concat(e)
+        // })
+        this.props.addMarker(e)
         if (newMarkers.length > 1) {
             this.calculateDistance(newMarkers);
             this.createPolylines();
@@ -85,7 +85,6 @@ class SimpleMap extends Component {
 
     onMapClick = e => {
         const { clickTrackEnabled } = this.state;
-        console.log(e, clickTrackEnabled);
         if (clickTrackEnabled) {
             this.recordClickInfo(e);
         }
@@ -110,7 +109,6 @@ class SimpleMap extends Component {
     createPolylines = () => {
         const { markers } = this.state;
         let polylines = [];
-        console.log("CICLE")
 
         const count = markers.length;
         if (count > 1) {
@@ -131,15 +129,13 @@ class SimpleMap extends Component {
     }
 
     updateDistanceSuccess = (newDistance) => {
-        console.log("uDS", newDistance)
         this.setState({
             distance: newDistance,
         })
     }
     googleApiLoaded = (opt) => {
         this.setState({ map: opt.map, maps: opt.maps, mapLoaded: true });
-        const { markers } = this.state;
-        console.log("fAL", opt.map)
+        const { markers } = this.props;
         this.renderMarkers(opt.map, opt.maps)
     }
 
@@ -161,18 +157,16 @@ class SimpleMap extends Component {
                 function callback(response, status) {
                     console.warn("!!!!!", response, status, distance)
                     const newDistance = distance + response.rows[0].elements[0].distance.value;
-                    self.props.updateDistanceSuccess(response.rows[0].elements[0].distance.value)
+                    self.props.addDistance(response.rows[0].elements[0].distance.value)
                 }
         }
 
-        console.log("DIIIIISTANCE", markers)
     }
 
 
     render() {
-        const { withControls } = this.props;
-        const { clickTrackEnabled, markers, polylines } = this.state;
-        console.log("render map state: ", this.state);
+        const { withControls, markers } = this.props;
+        const { clickTrackEnabled, polylines } = this.state;
         return (
             // Important! Always set the container height explicitly
             <div className="text-center" style={{ height: "70vh", width: "100%" }}>
@@ -210,7 +204,7 @@ class SimpleMap extends Component {
                      <Polyline
                         map={this.state.map}
                         maps={this.state.maps}
-                        markers={this.state.markers}
+                        markers={this.props.markers}
                     />
                 }
             </div>
@@ -218,4 +212,17 @@ class SimpleMap extends Component {
     }
 }
 
-export default SimpleMap;
+const mapStateToProps = ({ basic }) => {
+    console.log('mSTP FullReports.js > ', basic);
+    const {
+        markers
+    } = basic;
+    return {
+        markers,
+    };
+};
+
+export default connect(mapStateToProps, {
+    addDistance,
+    addMarker,
+})(SimpleMap);
