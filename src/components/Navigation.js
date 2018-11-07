@@ -58,7 +58,7 @@ class Navigation extends React.Component {
         return (
             <nav className="navbar bg-white">
                 <a className="navbar-brand text-dark" href="/">Travels</a>
-                <button onClick={this.addPathClick.bind(this)} className="btn bg-primary" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false">
+                <button onClick={this.addPathClick.bind(this)} className="btn bg-primary" type="button" >
                     ADD PATH
                 </button>
 

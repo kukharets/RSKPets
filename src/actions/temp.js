@@ -52,59 +52,22 @@ class SimpleMap extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            mapLoaded: false,
-            markers: [],
-            clickTrackEnabled: false,
+            mapLoaded: false
         };
     }
 
-    recordClickInfo(e) {
-        const state = this.state;
-        const { markers } = state;
-        let copy = Object.assign({}, e);
-        console.log("record: ", markers, e)
-        this.setState({
-            ...state,
-            markers: markers.concat(e)
-        })
-    }
-
     onMapClick = e => {
-        const { clickTrackEnabled } = this.state;
-        console.log(e, clickTrackEnabled);
-        if (clickTrackEnabled) {
-            this.recordClickInfo(e);
-        }
+        console.log(e);
     };
-
-    clickOnMapTrackerSwitch = () => {
-        const { clickTrackEnabled } = this.state;
-        this.setState({
-            clickTrackEnabled: !clickTrackEnabled,
-        })
-    }
 
     render() {
         const pathCoordinates = [
             { lat: 36.05298765935, lng: -112.083756616339 },
             { lat: 36.2169884797185, lng: -112.056727493181 }
         ];
-        const { withControls } = this.props;
-        const { clickTrackEnabled } = this.state;
-        console.log("render map state: ", this.state);
         return (
             // Important! Always set the container height explicitly
-            <div className="text-center" style={{ height: "70vh", width: "100%" }}>
-                {withControls &&
-                    <div className="position-absolute" style={{ height: "100vh", width: "100%", display: 'flex', justifyContent: 'center', paddingTop:'10vh' }}>
-                        <button onClick={this.clickOnMapTrackerSwitch} className="btn bg-white position-absolute text-dark" style={{zIndex: '2000'}} type="button" >
-                            {clickTrackEnabled ?
-                                <span>CLICK ON MAP</span> :
-                                <span>ADD MARKER</span>
-                            }
-                        </button>
-                    </div>
-                }
+            <div style={{ height: "100vh", width: "100%" }}>
                 <GoogleMapReact
                     bootstrapURLKeys={{ key: "AIzaSyCJT9zjJ9OOp0cZ099HTUAMghbCUcjpW3s" }}
                     defaultCenter={this.props.center}

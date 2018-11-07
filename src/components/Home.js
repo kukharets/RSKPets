@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import SimpleMap from "./Map";
 
 class App extends Component {
+    constructor(){
+        super();
+        this.state={
+            mapLoaded: false,
+        }
+    }
     render() {
         return (
                 <div className="p-5 h-100">
@@ -10,7 +16,12 @@ class App extends Component {
                             One of three columns
                         </div>
                         <div className="col-sm p-3">
-                            <SimpleMap/>
+                            {this.state.mapLoaded ?
+                            <SimpleMap/> :
+                                <h3 class="text-center">
+                                    Choise travel for show
+                                </h3>
+                            }
                         </div>
                     </div>
                 </div>
