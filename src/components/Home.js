@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SimpleMap from "./Map";
-import { fetchTravels, selectTravel, deleteTravel, addToFavorite } from "../actions";
+import { fetchTravels, selectTravel, deleteTravel, addToFavorite, filterTravels } from "../actions";
 import {connect} from "react-redux";
 import arrows from "../assets/arrows.png"
 import right from '../assets/right.png';
@@ -12,13 +12,10 @@ class Travel extends Component {
     }
     selectTravel = () => {
         const { data, index } = this.props;
-        console.log(data, index)
         data.index = index;
         this.props.selectTravel(data)
     }
     render(){
-
-        console.log("TRAVEL RENDER", this.props)
         const { data, selectedTravel, index } = this.props;
         const { title, short, distance, favorite } = data;
         const attachClass = (selectedTravel && (selectedTravel.index == index)) ? 'row m-4 lol hoverable ' : 'row m-4 bg-light hoverable';
@@ -62,6 +59,14 @@ class App extends Component {
         const { selectedTravel, addToFavorite } = this.props;
         addToFavorite(selectedTravel.key);
     }
+    filterTravels = (e) => {
+        const value = e.target.value;
+        if (value) {
+            this.props.filterTravels(e.target.value);
+        } else {
+            this.props.fetchTravels();
+        }
+    }
     render() {
         console.log("travels", this.props.travels)
         const { travels, selectedTravel, selectTravel } = this.props;
@@ -75,7 +80,7 @@ class App extends Component {
                                         <i className="fas fa-search h4 text-body"></i>
                                     </div>
                                     <div className="col">
-                                        <input className="form-control form-control-lg"
+                                        <input onChange={this.filterTravels} className="form-control form-control-lg"
                                                type="search" placeholder="Search treavel"/>
                                     </div>
                                 </div>
@@ -123,4 +128,5 @@ export default connect(mapStateToProps, {
     selectTravel,
     deleteTravel,
     addToFavorite,
+    filterTravels,
 })(App);

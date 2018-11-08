@@ -201,7 +201,6 @@ class SimpleMap extends Component {
 }
 
 const mapStateToProps = ({ basic }) => {
-    console.log('mSTP FullReports.js > ', basic);
     const {
         markers, selectedTravel,
     } = basic;

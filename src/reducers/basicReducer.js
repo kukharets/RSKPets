@@ -1,4 +1,4 @@
-import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF } from "../actions/types";
+import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS } from "../actions/types";
 
 const INIT_STATE = {
     addPathModalOpenState: false,
@@ -58,6 +58,23 @@ export default (state = INIT_STATE, action) => {
                 ...state,
                 mapsRefs: state.mapsRefs.concat(action.payload),
             }
+        case FILTER_TRAVELS:
+            let existedTravels = state.travels;
+            let finded = [];
+            for (let i = 0; i < existedTravels.length; i++){
+                const current = existedTravels[i];
+                console.log("try to find", action.payload, " in ", existedTravels[i], " and get: ", existedTravels.title ? existedTravels.title.includes(action.payload) : null)
+                let inTitleExist = current.title ? current.title.includes(action.payload + "") : false;
+                let inDescriptionExist = current.description ? current.description.includes(action.payload) : false;
+                if (inTitleExist || inDescriptionExist){
+                    finded.push(current)
+                }
+            }
+            console.log("filter travels,", state)
+            return {
+                ...state,
+                travels: finded
+            };
         default:
             return state;
     }
