@@ -1,4 +1,4 @@
-import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL } from "../actions/types";
+import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF } from "../actions/types";
 
 const INIT_STATE = {
     addPathModalOpenState: false,
@@ -6,6 +6,7 @@ const INIT_STATE = {
     distance: 0,
     travels: [],
     selectedTravel: null,
+    markersRefs: [],
 };
 export default (state = INIT_STATE, action) => {
     switch (action.type) {
@@ -39,10 +40,21 @@ export default (state = INIT_STATE, action) => {
             };
         case SELECT_TRAVEL:
             console.log("reducer select travel", action.payload)
+            let { markersRefs } = state;
+            if (markersRefs.length > 0) {
+                for (let i = 0; i < markersRefs.length; i++){
+                    markersRefs[i].setMap(null);
+                }
+            }
             return {
                 ...state,
                 selectedTravel: action.payload,
                 markers: action.payload.markers || [],
+            };
+        case ADD_MARKER_REF:
+            return {
+                ...state,
+                markersRefs: state.markersRefs.concat(action.payload),
             }
         default:
             return state;

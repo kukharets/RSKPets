@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import GoogleMapReact from "google-map-react";
 import marker from '../assets/marker.png'
 import {connect} from "react-redux";
-import {switchDailyPreviewModalState, addDistance, addMarker} from "../actions";
+import {switchDailyPreviewModalState, addDistance, addMarker, selectTravel, addMarkerRef } from "../actions";
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Marker extends Component {
@@ -12,13 +12,18 @@ class Marker extends Component {
     }
     render(){
         const { lat, lng, map, maps } = this.props;
-        console.warn("MARKER RENDER: ", lat, lng, map, maps)
         let marker = new maps.Marker({
             position: { lat: lat, lng: lng },
             map,
             title: 'Hello World!'
         });
-        this.marker = marker;
+        if (!map.markers) {
+            map.markers = []
+        }
+        //map.markers.push({marker: this.props, element: marker});
+        this.props.addMarkerRef(marker)
+        console.warn("MARKER RENDER: ", lat, lng, map, maps)
+
         return null;
     }
 }
@@ -147,7 +152,7 @@ class SimpleMap extends Component {
     render() {
         const { withControls, markers } = this.props;
         const { clickTrackEnabled, mapLoaded } = this.state;
-        console.log("MAP RENDER", this.props)
+        console.log("MAP RENDER", this.props, this)
         return (
             // Important! Always set the container height explicitly
             <div className="text-center" style={{ height: "70vh", width: "100%" }}>
@@ -179,7 +184,8 @@ class SimpleMap extends Component {
                 </GoogleMapReact>
 
                 {(mapLoaded && markers.length > 0) && markers.map((marker, index) => {
-                    return <Marker key={this.props.selectedTravel.index + index} lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps} addMarker={this.props.addMarker}/>
+                console.log("RENDER MARKER", marker, index)
+                    return <Marker lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps} addMarkerRef={this.props.addMarkerRef}/>
                 })}
                 {(mapLoaded && markers.length > 1) &&
                 <Polyline
@@ -206,4 +212,6 @@ const mapStateToProps = ({ basic }) => {
 export default connect(mapStateToProps, {
     addDistance,
     addMarker,
+    selectTravel,
+    addMarkerRef,
 })(SimpleMap);

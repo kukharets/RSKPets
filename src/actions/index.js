@@ -1,5 +1,5 @@
 import { todosRef, travelsRef } from "../config/firebase";
-import {FETCH_TODOS, ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_TO_FAVORITES} from "./types";
+import {FETCH_TODOS, ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF } from "./types";
 
 export const addToDo = newToDo => async dispatch => {
     todosRef.push().set(newToDo);
@@ -54,6 +54,11 @@ export const addMarker = (marker) => ({
 export const addDistance = (distance) => ({
     type: ADD_DISTANCE,
     payload: distance,
+});
+
+export const addMarkerRef = (ref) => ({
+    type: ADD_MARKER_REF,
+    payload: ref,
 });
 
 export const selectTravel = (travel) => ({
