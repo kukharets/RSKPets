@@ -6,7 +6,7 @@ const INIT_STATE = {
     distance: 0,
     travels: [],
     selectedTravel: null,
-    markersRefs: [],
+    mapsRefs: [],
 };
 export default (state = INIT_STATE, action) => {
     switch (action.type) {
@@ -30,31 +30,33 @@ export default (state = INIT_STATE, action) => {
                 distance: distance + action.payload,
             };
         case FETCH_TRAVELS:
+            const travels = action.payload ? Object.keys(action.payload).map(function(i) {
+                let newTravel = action.payload[i];
+                newTravel.key = i;
+                return newTravel
+            }) : []
             return {
                 ...state,
-                travels: Object.keys(action.payload).map(function(i) {
-                    let newTravel = action.payload[i];
-                    newTravel.key = i;
-                    return newTravel
-                })
+                travels: travels
             };
         case SELECT_TRAVEL:
             console.log("reducer select travel", action.payload)
-            let { markersRefs } = state;
-            if (markersRefs.length > 0) {
-                for (let i = 0; i < markersRefs.length; i++){
-                    markersRefs[i].setMap(null);
+            let { mapsRefs } = state;
+            if (mapsRefs.length > 0) {
+                for (let i = 0; i < mapsRefs.length; i++){
+                    mapsRefs[i].setMap(null);
                 }
             }
             return {
                 ...state,
                 selectedTravel: action.payload,
                 markers: action.payload.markers || [],
+                mapsRefs: [],
             };
         case ADD_MARKER_REF:
             return {
                 ...state,
-                markersRefs: state.markersRefs.concat(action.payload),
+                mapsRefs: state.mapsRefs.concat(action.payload),
             }
         default:
             return state;

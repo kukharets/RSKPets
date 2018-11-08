@@ -56,7 +56,7 @@ export const addDistance = (distance) => ({
     payload: distance,
 });
 
-export const addMarkerRef = (ref) => ({
+export const addMapRef = (ref) => ({
     type: ADD_MARKER_REF,
     payload: ref,
 });
