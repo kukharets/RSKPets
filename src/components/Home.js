@@ -124,7 +124,7 @@ class App extends Component {
                   />
                 </div>
               </div>
-              <div style={{ height: "70vh", overflowY: 'scroll' }}  className="p-1 scrolling">
+              <div style={{ height: "60vh", overflowY: 'scroll' }}  className="p-1 scrolling">
                 {travels.length > 0 &&
                   travels.map((travel, index) => {
                     return (
@@ -142,13 +142,14 @@ class App extends Component {
           <div className="col-sm p-3">
             {this.props.selectedTravel ? (
               <div className="p-4">
-                <span>{selectedTravel.title}</span>
+                <span className="h4">{selectedTravel.title}</span>
                 <span className="float-right h4">
                   {selectedTravel.distance > 0
                     ? (selectedTravel.distance / 1000).toFixed(2)
                     : 0}
                   &nbsp;km
                 </span>
+                  <hr/>
                 <div>{selectedTravel.description}</div>
                 <SimpleMap center={center}/>
                 <div

@@ -123,7 +123,7 @@ class SimpleMap extends Component {
         const { withControls, markers } = this.props;
         const { clickTrackEnabled, mapLoaded } = this.state;
         return (
-            <div className="text-center" style={{ height: "70vh", width: "100%" }}>
+            <div className="text-center" style={{ height: "50vh", width: "100%", paddingTop: '10px' }}>
                 {withControls &&
                 <div className="position-absolute" style={{ height: "100vh", width: "100%", display: 'flex', justifyContent: 'center', paddingTop:'10vh' }}>
                     <button onClick={this.clickOnMapTrackerSwitch} className="btn bg-white position-absolute text-dark" style={{zIndex: '2000'}} type="button" >
