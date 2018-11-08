@@ -1,5 +1,5 @@
 import { travelsRef } from "../config/firebase";
-import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS } from "./types";
+import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS, DELETE_TRAVEL } from "./types";
 
 export const addTravel = newTravel => async dispatch => {
     travelsRef.push().set(newTravel);
@@ -7,6 +7,10 @@ export const addTravel = newTravel => async dispatch => {
 
 export const deleteTravel = travelId => async dispatch => {
     travelsRef.child(travelId).remove();
+    dispatch({
+        type: DELETE_TRAVEL,
+        payload: travelId,
+    });
 };
 
 export const addToFavorite = travelId => async dispatch => {

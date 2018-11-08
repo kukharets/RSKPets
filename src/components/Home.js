@@ -14,15 +14,14 @@ import star from "../assets/star.png";
 
 class Travel extends Component {
   selectTravel = () => {
-    const { data, index } = this.props;
-    data.index = index;
+    const { data } = this.props;
     this.props.selectTravel(data);
   };
   render() {
-    const { data, selectedTravel, index } = this.props;
-    const { title, short, distance, favorite } = data;
+    const { data, selectedTravel } = this.props;
+    const { title, short, distance, favorite, key } = data;
     const attachClass =
-      selectedTravel && selectedTravel.index == index
+      selectedTravel && selectedTravel.key == key
         ? "row m-4 lol hoverable "
         : "row m-4 bg-light hoverable";
     return (
@@ -31,14 +30,14 @@ class Travel extends Component {
         style={{ marginTop: "0", height: "100px" }}
         className={attachClass}
       >
-        <div className="col-2 no-pad border">
+        <div className="col-2 no-pad">
           <img
             style={{ width: "100%", paddingTop: "15px" }}
             src={arrows}
             alt=""
           />
         </div>
-        <div className="col-6 border">
+        <div className="col-6">
           <h4>
             {favorite && (
               <img
@@ -103,6 +102,7 @@ class App extends Component {
   };
   render() {
     const { travels, selectedTravel, selectTravel } = this.props;
+    const center = selectedTravel && selectedTravel.markers && selectedTravel.markers[0];
     return (
       <div className="p-5 h-100">
         <div className="row h-100 w-100">
@@ -124,7 +124,7 @@ class App extends Component {
                   />
                 </div>
               </div>
-              <div className="p-1">
+              <div style={{ height: "70vh", overflowY: 'scroll' }}  className="p-1 scrolling">
                 {travels.length > 0 &&
                   travels.map((travel, index) => {
                     return (
@@ -150,7 +150,7 @@ class App extends Component {
                   &nbsp;km
                 </span>
                 <div>{selectedTravel.description}</div>
-                <SimpleMap />
+                <SimpleMap center={center}/>
                 <div
                   onClick={this.addToFavorite}
                   style={{ cursor: "pointer" }}

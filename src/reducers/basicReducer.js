@@ -1,4 +1,4 @@
-import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS } from "../actions/types";
+import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS, DELETE_TRAVEL } from "../actions/types";
 
 const INIT_STATE = {
     addPathModalOpenState: false,
@@ -34,17 +34,17 @@ export default (state = INIT_STATE, action) => {
                 let newTravel = action.payload[i];
                 newTravel.key = i;
                 return newTravel
-            }) : []
+            }) : [];
             return {
                 ...state,
-                travels: travels
+                travels: travels,
+                addPathModalOpenState: false,
             };
         case SELECT_TRAVEL:
-            console.log("reducer select travel", action.payload)
             let { mapsRefs } = state;
             if (mapsRefs.length > 0) {
                 for (let i = 0; i < mapsRefs.length; i++){
-                    mapsRefs[i].setMap(null);
+                    mapsRefs[i].setMap && mapsRefs[i].setMap(null);
                 }
             }
             return {
@@ -57,7 +57,7 @@ export default (state = INIT_STATE, action) => {
             return {
                 ...state,
                 mapsRefs: state.mapsRefs.concat(action.payload),
-            }
+            };
         case FILTER_TRAVELS:
             let existedTravels = state.travels;
             let finded = [];
@@ -69,11 +69,19 @@ export default (state = INIT_STATE, action) => {
                     finded.push(current)
                 }
             }
-            console.log("filter travels,", state)
             return {
                 ...state,
                 travels: finded
             };
+        case DELETE_TRAVEL:
+            const { selectedTravel } = state;
+            console.log("delete", selectedTravel, action.payload)
+            const wasSelected = selectedTravel.key === action.payload;
+            return {
+                ...state,
+                mapsRefs: state.mapsRefs.concat(action.payload),
+                selectedTravel: wasSelected ? null : selectedTravel,
+            }
         default:
             return state;
     }

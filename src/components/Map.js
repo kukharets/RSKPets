@@ -44,7 +44,7 @@ class SimpleMap extends Component {
             lat: 49.82973843444284,
             lng: 23.9697290377037
         },
-        zoom: 16
+        zoom: 15
     };
 
     constructor(props) {
@@ -136,7 +136,7 @@ class SimpleMap extends Component {
                 }
                 <GoogleMapReact
                     bootstrapURLKeys={{ key: "AIzaSyCJT9zjJ9OOp0cZ099HTUAMghbCUcjpW3s" }}
-                    defaultCenter={this.props.center}
+                    center={this.props.center}
                     defaultZoom={this.props.zoom}
                     onClick={this.onMapClick}
                     onGoogleApiLoaded={({ map, maps }) => {
