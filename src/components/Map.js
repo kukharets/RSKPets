@@ -7,6 +7,7 @@ const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Marker extends Component {
     componentWillUnmount(){
+        console.log("UNMOUNT!!")
         this.marker && this.marker.setMap(null);
     }
     render(){
@@ -102,18 +103,9 @@ class SimpleMap extends Component {
             clickTrackEnabled: !clickTrackEnabled,
         })
     }
-    renderMarkers = (options, options1) => {
-        // console.log("render markers", options, options1)
-        // let google = window.google;
-        // let marker = new options1.Marker({
-        //     position: { lat: 36.05298765935, lng: -112.083756616339 },
-        //     map: options,
-        //     title: 'Hello World!'
-        // });
-    }
 
     createPolylines = () => {
-        const { markers } = this.state;
+        const { markers } = this.props;
         let polylines = [];
 
         const count = markers.length;
@@ -132,21 +124,21 @@ class SimpleMap extends Component {
         let self = this;
         const lastIndex =  markers.length - 1;
         if (markers.length > 1) {
-                var service = new maps.DistanceMatrixService();
-                service.getDistanceMatrix(
-                    {
-                        origins: [markers[lastIndex]],
-                        destinations: [markers[lastIndex-1]],
-                        travelMode: 'WALKING',
-                        avoidHighways: false,
-                        avoidTolls: false,
-                    }, callback);
+            let service = new maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+                {
+                    origins: [markers[lastIndex]],
+                    destinations: [markers[lastIndex-1]],
+                    travelMode: 'WALKING',
+                    avoidHighways: false,
+                    avoidTolls: false,
+                }, callback);
 
-                function callback(response, status) {
-                    console.warn("!!!!!", response, status, distance)
-                    const newDistance = distance + response.rows[0].elements[0].distance.value;
-                    self.props.addDistance(response.rows[0].elements[0].distance.value)
-                }
+            function callback(response, status) {
+                console.warn("!!!!!", response, status, distance)
+                const newDistance = distance + response.rows[0].elements[0].distance.value;
+                self.props.addDistance(response.rows[0].elements[0].distance.value)
+            }
         }
 
     }
@@ -160,14 +152,14 @@ class SimpleMap extends Component {
             // Important! Always set the container height explicitly
             <div className="text-center" style={{ height: "70vh", width: "100%" }}>
                 {withControls &&
-                    <div className="position-absolute" style={{ height: "100vh", width: "100%", display: 'flex', justifyContent: 'center', paddingTop:'10vh' }}>
-                        <button onClick={this.clickOnMapTrackerSwitch} className="btn bg-white position-absolute text-dark" style={{zIndex: '2000'}} type="button" >
-                            {clickTrackEnabled ?
-                                <span>CLICK ON MAP</span> :
-                                <span>ADD MARKER</span>
-                            }
-                        </button>
-                    </div>
+                <div className="position-absolute" style={{ height: "100vh", width: "100%", display: 'flex', justifyContent: 'center', paddingTop:'10vh' }}>
+                    <button onClick={this.clickOnMapTrackerSwitch} className="btn bg-white position-absolute text-dark" style={{zIndex: '2000'}} type="button" >
+                        {clickTrackEnabled ?
+                            <span>CLICK ON MAP</span> :
+                            <span>ADD MARKER</span>
+                        }
+                    </button>
+                </div>
                 }
                 <GoogleMapReact
                     bootstrapURLKeys={{ key: "AIzaSyCJT9zjJ9OOp0cZ099HTUAMghbCUcjpW3s" }}
@@ -186,15 +178,15 @@ class SimpleMap extends Component {
                     />
                 </GoogleMapReact>
 
-                {(mapLoaded && markers.length > 0) && markers.map((marker) => {
-                    return <Marker lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps}/>
+                {(mapLoaded && markers.length > 0) && markers.map((marker, index) => {
+                    return <Marker key={this.props.selectedTravel.index + index} lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps} addMarker={this.props.addMarker}/>
                 })}
-                {(this.state.mapLoaded && markers.length > 1) &&
-                     <Polyline
-                        map={this.state.map}
-                        maps={this.state.maps}
-                        markers={this.props.markers}
-                    />
+                {(mapLoaded && markers.length > 1) &&
+                <Polyline
+                    map={this.state.map}
+                    maps={this.state.maps}
+                    markers={this.props.markers}
+                />
                 }
             </div>
         );
@@ -204,10 +196,10 @@ class SimpleMap extends Component {
 const mapStateToProps = ({ basic }) => {
     console.log('mSTP FullReports.js > ', basic);
     const {
-        markers
+        markers, selectedTravel,
     } = basic;
     return {
-        markers,
+        markers, selectedTravel,
     };
 };
 
