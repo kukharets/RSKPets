@@ -29,10 +29,13 @@ export default (state = INIT_STATE, action) => {
                 distance: distance + action.payload,
             };
         case FETCH_TRAVELS:
-            console.log("FETCH TRAVELS", action.payload)
             return {
                 ...state,
-                travels: Object.keys(action.payload).map(function(i) { return action.payload[i] })
+                travels: Object.keys(action.payload).map(function(i) {
+                    let newTravel = action.payload[i];
+                    newTravel.key = i;
+                    return newTravel
+                })
             };
         case SELECT_TRAVEL:
             console.log("reducer select travel", action.payload)

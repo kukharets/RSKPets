@@ -1,5 +1,5 @@
 import { todosRef, travelsRef } from "../config/firebase";
-import {FETCH_TODOS, ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL} from "./types";
+import {FETCH_TODOS, ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_TO_FAVORITES} from "./types";
 
 export const addToDo = newToDo => async dispatch => {
     todosRef.push().set(newToDo);
@@ -13,6 +13,15 @@ export const addTravel = newTravel => async dispatch => {
 
 export const completeToDo = completeToDoId => async dispatch => {
     todosRef.child(completeToDoId).remove();
+};
+
+export const deleteTravel = travelId => async dispatch => {
+    travelsRef.child(travelId).remove();
+};
+
+export const addToFavorite = travelId => async dispatch => {
+    travelsRef.child(travelId)
+        .update({ favorite: true });
 };
 
 export const fetchToDos = () => async dispatch => {

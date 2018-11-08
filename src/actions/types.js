@@ -5,3 +5,4 @@ export const ADD_MARKER = "ADD_MARKER";
 export const ADD_DISTANCE = "ADD_DISTANCE";
 export const FETCH_TRAVELS = "FETCH_TRAVELS";
 export const SELECT_TRAVEL = "SELECT_TRAVEL";
+export const ADD_TO_FAVORITES = "ADD_TO_FAVORITES";

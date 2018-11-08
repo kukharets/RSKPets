@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import SimpleMap from "./Map";
-import { fetchTravels, selectTravel } from "../actions";
+import { fetchTravels, selectTravel, deleteTravel, addToFavorite } from "../actions";
 import {connect} from "react-redux";
 import arrows from "../assets/arrows.png"
 import right from '../assets/right.png';
+import star from '../assets/star.png';
 
 class Travel extends Component {
     constructor(){
@@ -17,9 +18,9 @@ class Travel extends Component {
     }
     render(){
 
-        console.log("TRAVEL RENDER")
+        console.log("TRAVEL RENDER", this.props)
         const { data, selectedTravel, index } = this.props;
-        const { title, short, description, distance } = data;
+        const { title, short, distance, favorite } = data;
         const attachClass = (selectedTravel && (selectedTravel.index == index)) ? 'row m-4 lol hoverable ' : 'row m-4 bg-light hoverable';
         return (
             <div onClick={this.selectTravel} style={{marginTop: '0', height: '100px'}} className={attachClass}>
@@ -27,7 +28,7 @@ class Travel extends Component {
                     <img style={{width: '100%', paddingTop: '15px'}} src={arrows} alt=""/>
                 </div>
                 <div className="col-6 border" >
-                    <h4>{title}</h4>
+                    <h4>{favorite && <img style={{ height: '16px', width: '16px' }} src={star} alt=""/>}{title}</h4>
                     <div style={{
                         height: '60px',
                         overflow: 'hidden',}}>{short}</div>
@@ -52,6 +53,14 @@ class App extends Component {
     }
     componentWillMount() {
         this.props.fetchTravels();
+    }
+    deleteTravel = () => {
+        const { selectedTravel, deleteTravel } = this.props;
+        deleteTravel(selectedTravel.key);
+    }
+    addToFavorite = () => {
+        const { selectedTravel, addToFavorite } = this.props;
+        addToFavorite(selectedTravel.key);
     }
     render() {
         console.log("travels", this.props.travels)
@@ -80,9 +89,13 @@ class App extends Component {
                         </div>
                         <div className="col-sm p-3">
                             {this.props.selectedTravel ?
-                                <div>
-                                    <span><h4>{selectedTravel.title}</h4></span>
+                                <div className="p-4">
+                                    <span>{selectedTravel.title}</span><span className="float-right h4">{selectedTravel.distance > 0 ? (selectedTravel.distance/1000).toFixed(2) : 0}&nbsp;km</span>
+                                    <div>{selectedTravel.description}</div>
                                     <SimpleMap />
+                                    <div onClick={this.addToFavorite} style={{ cursor: 'pointer' }} className="float-right hover">Add to favorites</div>
+                                    <br/>
+                                    <div onClick={this.deleteTravel} style={{ color: 'red', cursor: 'pointer' }} className="float-right hover">Delete</div>
                                 </div> :
                                 <h3 class="text-center">
                                     Choice travel for show
@@ -108,4 +121,6 @@ const mapStateToProps = ({ basic }) => {
 export default connect(mapStateToProps, {
     fetchTravels,
     selectTravel,
+    deleteTravel,
+    addToFavorite,
 })(App);
