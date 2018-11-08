@@ -6,6 +6,9 @@ import {switchDailyPreviewModalState, addDistance, addMarker} from "../actions";
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class Marker extends Component {
+    componentWillUnmount(){
+        this.marker && this.marker.setMap(null);
+    }
     render(){
         const { lat, lng, map, maps } = this.props;
         console.warn("MARKER RENDER: ", lat, lng, map, maps)
@@ -14,15 +17,19 @@ class Marker extends Component {
             map,
             title: 'Hello World!'
         });
+        this.marker = marker;
         return null;
     }
 }
 
 class Polyline extends Component {
+    componentWillUnmount(){
+        this.flightPath && this.flightPath.setMap(null);
+    }
     render() {
         const { map, markers } = this.props;
         const google = window.google;
-        var flightPath = new google.maps.Polyline({
+        this.flightPath = new google.maps.Polyline({
             path: markers,
             geodesic: true,
             strokeColor: "#FF0000",
@@ -30,7 +37,7 @@ class Polyline extends Component {
             strokeWeight: 2
         });
 
-        flightPath.setMap(map);
+        this.flightPath.setMap(map);
 
         return null;
     }
@@ -62,7 +69,6 @@ class SimpleMap extends Component {
         super(props);
         this.state = {
             mapLoaded: false,
-            markers: [],
             polylines: [],
             clickTrackEnabled: false,
             distance: 0,
@@ -112,31 +118,13 @@ class SimpleMap extends Component {
 
         const count = markers.length;
         if (count > 1) {
-            // for (let i = 0; i < count; i ++){
-            //     console.log("CICLE")
-            //     if (markers[i+1]){
-            //         polylines.push({
-            //             start: markers[i],
-            //             end: markers[i+1]
-            //         })
-            //
-            //     }
-            // }
             this.setState({
                 polylines: polylines
             })
         }
     }
-
-    updateDistanceSuccess = (newDistance) => {
-        this.setState({
-            distance: newDistance,
-        })
-    }
     googleApiLoaded = (opt) => {
         this.setState({ map: opt.map, maps: opt.maps, mapLoaded: true });
-        const { markers } = this.props;
-        this.renderMarkers(opt.map, opt.maps)
     }
 
     calculateDistance = (markers) => {
@@ -166,7 +154,8 @@ class SimpleMap extends Component {
 
     render() {
         const { withControls, markers } = this.props;
-        const { clickTrackEnabled, polylines } = this.state;
+        const { clickTrackEnabled, mapLoaded } = this.state;
+        console.log("MAP RENDER", this.props)
         return (
             // Important! Always set the container height explicitly
             <div className="text-center" style={{ height: "70vh", width: "100%" }}>
@@ -197,7 +186,7 @@ class SimpleMap extends Component {
                     />
                 </GoogleMapReact>
 
-                {markers.length > 0 && markers.map((marker) => {
+                {(mapLoaded && markers.length > 0) && markers.map((marker) => {
                     return <Marker lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps}/>
                 })}
                 {(this.state.mapLoaded && markers.length > 1) &&

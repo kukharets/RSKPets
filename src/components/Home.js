@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SimpleMap from "./Map";
-import { fetchTravels } from "../actions";
+import { fetchTravels, selectTravel } from "../actions";
 import {connect} from "react-redux";
 import arrows from "../assets/arrows.png"
 import right from '../assets/right.png';
@@ -9,12 +9,20 @@ class Travel extends Component {
     constructor(){
         super()
     }
+    selectTravel = () => {
+        const { data, index } = this.props;
+        console.log(data, index)
+        data.index = index;
+        this.props.selectTravel(data)
+    }
     render(){
+
         console.log("TRAVEL RENDER")
-        const { data } = this.props;
+        const { data, selectedTravel, index } = this.props;
         const { title, short, description, distance } = data;
+        const attachClass = (selectedTravel && (selectedTravel.index == index)) ? 'row m-4 lol hoverable ' : 'row m-4 bg-light hoverable';
         return (
-            <div style={{marginTop: '0', height: '100px'}} className="row m-4 bg-light">
+            <div onClick={this.selectTravel} style={{marginTop: '0', height: '100px'}} className={attachClass}>
                 <div className="col-2 no-pad border">
                     <img style={{width: '100%', paddingTop: '15px'}} src={arrows} alt=""/>
                 </div>
@@ -27,9 +35,7 @@ class Travel extends Component {
                 <div className="col-4" style={{ marginTop: '35px' }}>
                         <h4>
                             {distance > 0 ? (distance/1000).toFixed(2) : 0}&nbsp;km
-
                             <img className="float-right" style={{ height: '20px', width: '20px' }} src={right} alt=""/>
-
                         </h4>
                 </div>
             </div>
@@ -49,7 +55,7 @@ class App extends Component {
     }
     render() {
         console.log("travels", this.props.travels)
-        const { travels } = this.props;
+        const { travels, selectedTravel, selectTravel } = this.props;
         return (
                 <div className="p-5 h-100">
                     <div className="row h-100 w-100">
@@ -65,18 +71,21 @@ class App extends Component {
                                     </div>
                                 </div>
                                 <div className="p-1">
-                                    {travels.length > 0 && travels.map((travel) => {
-                                        return <Travel data={travel}/>
+                                    {travels.length > 0 && travels.map((travel, index) => {
+                                        return <Travel data={travel} index={index} selectedTravel={selectedTravel} selectTravel={selectTravel}/>
                                     })}
                                 </div>
 
                             </form>
                         </div>
                         <div className="col-sm p-3">
-                            {this.state.mapLoaded ?
-                            <SimpleMap/> :
+                            {this.props.selectedTravel ?
+                                <div>
+                                    <span><h4>{selectedTravel.title}</h4></span>
+                                    <SimpleMap />
+                                </div> :
                                 <h3 class="text-center">
-                                    Choise travel for show
+                                    Choice travel for show
                                 </h3>
                             }
                         </div>
@@ -89,13 +98,14 @@ class App extends Component {
 const mapStateToProps = ({ basic }) => {
     console.log('mSTP FullReports.js > ', basic);
     const {
-        travels,
+        travels, selectedTravel,
     } = basic;
     return {
-        travels,
+        travels, selectedTravel,
     };
 };
 
 export default connect(mapStateToProps, {
-    fetchTravels
+    fetchTravels,
+    selectTravel,
 })(App);
