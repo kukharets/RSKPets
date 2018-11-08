@@ -63,7 +63,6 @@ export default (state = INIT_STATE, action) => {
             let finded = [];
             for (let i = 0; i < existedTravels.length; i++){
                 const current = existedTravels[i];
-                console.log("try to find", action.payload, " in ", existedTravels[i], " and get: ", existedTravels.title ? existedTravels.title.includes(action.payload) : null)
                 let inTitleExist = current.title ? current.title.includes(action.payload + "") : false;
                 let inDescriptionExist = current.description ? current.description.includes(action.payload) : false;
                 if (inTitleExist || inDescriptionExist){

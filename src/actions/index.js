@@ -1,18 +1,8 @@
-import { todosRef, travelsRef } from "../config/firebase";
-import {FETCH_TODOS, ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS } from "./types";
-
-export const addToDo = newToDo => async dispatch => {
-    todosRef.push().set(newToDo);
-};
+import { travelsRef } from "../config/firebase";
+import { ADD_PATH_TOOGLE_MODAL, ADD_MARKER, ADD_DISTANCE, FETCH_TRAVELS, SELECT_TRAVEL, ADD_MARKER_REF, FILTER_TRAVELS } from "./types";
 
 export const addTravel = newTravel => async dispatch => {
-    console.log("action.",newTravel)
     travelsRef.push().set(newTravel);
-};
-
-
-export const completeToDo = completeToDoId => async dispatch => {
-    todosRef.child(completeToDoId).remove();
 };
 
 export const deleteTravel = travelId => async dispatch => {
@@ -22,15 +12,6 @@ export const deleteTravel = travelId => async dispatch => {
 export const addToFavorite = travelId => async dispatch => {
     travelsRef.child(travelId)
         .update({ favorite: true });
-};
-
-export const fetchToDos = () => async dispatch => {
-    todosRef.on("value", snapshot => {
-        dispatch({
-            type: FETCH_TODOS,
-            payload: snapshot.val()
-        });
-    });
 };
 
 export const fetchTravels = () => async dispatch => {

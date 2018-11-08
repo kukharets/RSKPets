@@ -1,37 +1,25 @@
 import React, { Component } from "react";
 import GoogleMapReact from "google-map-react";
-import marker from '../assets/marker.png'
 import {connect} from "react-redux";
-import {switchDailyPreviewModalState, addDistance, addMarker, selectTravel, addMapRef } from "../actions";
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+import { addDistance, addMarker, selectTravel, addMapRef } from "../actions";
 
 class Marker extends Component {
-    componentWillUnmount(){
-        console.log("UNMOUNT!!")
-        this.marker && this.marker.setMap(null);
-    }
     render(){
         const { lat, lng, map, maps } = this.props;
         let marker = new maps.Marker({
             position: { lat: lat, lng: lng },
             map,
-            title: 'Hello World!'
+            title: 'Travel marker'
         });
         if (!map.markers) {
             map.markers = []
         }
-        //map.markers.push({marker: this.props, element: marker});
-        this.props.addMapRef(marker)
-        console.warn("MARKER RENDER: ", lat, lng, map, maps)
-
+        this.props.addMapRef(marker);
         return null;
     }
 }
 
 class Polyline extends Component {
-    componentWillUnmount(){
-        this.flightPath && this.flightPath.setMap(null);
-    }
     render() {
         const { map, markers } = this.props;
         const google = window.google;
@@ -47,21 +35,9 @@ class Polyline extends Component {
         this.props.addMapRef(flightPath)
         return null;
     }
-
-    renderPolyline() {
-    }
 }
 
-class Normal extends Polyline {
-    renderPolyline() {
-        return {
-            geodesic: true,
-            strokeColor: this.props.color || "#ffffff",
-            strokeOpacity: 1,
-            strokeWeight: 4
-        };
-    }
-}
+
 class SimpleMap extends Component {
     static defaultProps = {
         center: {
@@ -83,11 +59,7 @@ class SimpleMap extends Component {
 
     recordClickInfo(e) {
         const { markers } = this.props;
-        const newMarkers = markers.concat(e)
-        // this.setState({
-        //     ...state,
-        //     markers: markers.concat(e)
-        // })
+        const newMarkers = markers.concat(e);
         this.props.addMarker(e)
         if (newMarkers.length > 1) {
             this.calculateDistance(newMarkers);
@@ -103,7 +75,7 @@ class SimpleMap extends Component {
     };
 
     clickOnMapTrackerSwitch = () => {
-        const { clickTrackEnabled, markers } = this.state;
+        const { clickTrackEnabled } = this.state;
         this.setState({
             clickTrackEnabled: !clickTrackEnabled,
         })
@@ -125,7 +97,7 @@ class SimpleMap extends Component {
     }
 
     calculateDistance = (markers) => {
-        const { map, maps, distance = 0 } = this.state;
+        const { maps, distance = 0 } = this.state;
         let self = this;
         const lastIndex =  markers.length - 1;
         if (markers.length > 1) {
@@ -140,8 +112,6 @@ class SimpleMap extends Component {
                 }, callback);
 
             function callback(response, status) {
-                console.warn("!!!!!", response, status, distance)
-                const newDistance = distance + response.rows[0].elements[0].distance.value;
                 self.props.addDistance(response.rows[0].elements[0].distance.value)
             }
         }
@@ -152,9 +122,7 @@ class SimpleMap extends Component {
     render() {
         const { withControls, markers } = this.props;
         const { clickTrackEnabled, mapLoaded } = this.state;
-        console.log("MAP RENDER", this.props, this)
         return (
-            // Important! Always set the container height explicitly
             <div className="text-center" style={{ height: "70vh", width: "100%" }}>
                 {withControls &&
                 <div className="position-absolute" style={{ height: "100vh", width: "100%", display: 'flex', justifyContent: 'center', paddingTop:'10vh' }}>
@@ -176,15 +144,9 @@ class SimpleMap extends Component {
                     }}
                     yesIWantToUseGoogleMapApiInternals
                 >
-                    <AnyReactComponent
-                        lat={59.955413}
-                        lng={30.337844}
-                        text={"Kreyser Avrora"}
-                    />
                 </GoogleMapReact>
 
                 {(mapLoaded && markers.length > 0) && markers.map((marker, index) => {
-                console.log("RENDER MARKER", marker, index)
                     return <Marker lat={marker.lat} lng={marker.lng} map={this.state.map} maps={this.state.maps} addMapRef={this.props.addMapRef}/>
                 })}
                 {(mapLoaded && markers.length > 1) &&
